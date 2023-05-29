@@ -8,6 +8,7 @@ import { CreateUserResponse, LoginResponse } from './entities/auth.entity';
 import * as jwt from 'jsonwebtoken';
 import { generateOtp } from '../helpers/generateOtp';
 import { VerificationToken } from './schema/verification.schema';
+import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class AuthService {
@@ -39,6 +40,35 @@ export class AuthService {
 
     await newVerificationToken.save();
 
+    // send mail with nodemmailer
+
+    console.log(process.env.MAIL_TRAP_PASSWORD);
+    console.log(process.env.MAIL_TRAP_USERNAME);
+
+    const transporter = nodemailer.createTransport({
+      auth: {
+        user: process.env.MAIL_TRAP_USERNAME,
+        pass: process.env.MAIL_TRAP_PASSWORD,
+      },
+      host: 'sandbox.smtp.mailtrap.io',
+      port: 2525,
+    });
+
+    const mailOptions = {
+      from: 'abumahfuz21@gmail.com',
+      to: email,
+      subject: 'Email Verification',
+      text: `Your OTP is ${OTP}`,
+      html: `<h1>Here is your ${OTP}<h1>`,
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
     const user = await newUser.save();
     const response: CreateUserResponse = {
       id: user._id.toString(),
