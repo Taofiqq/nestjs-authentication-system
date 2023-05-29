@@ -20,4 +20,13 @@ export class AuthController {
     const user = await this.authService.signIn(email, password);
     return user;
   }
+
+  // verify email
+  @Post('/verify-email')
+  async verifyEmail(@Body() body: { otp: string; userId: string }) {
+    const { otp, userId } = body;
+    console.log(otp, userId);
+    const user = await this.authService.verifyEmail(otp, userId);
+    return user;
+  }
 }

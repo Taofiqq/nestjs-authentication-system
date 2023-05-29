@@ -19,6 +19,9 @@ export class User {
   })
   name: string;
 
+  @Prop({ default: false, required: true })
+  isEmailVerified?: boolean;
+
   @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 

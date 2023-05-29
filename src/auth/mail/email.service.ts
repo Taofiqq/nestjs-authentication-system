@@ -28,4 +28,30 @@ export class EmailService {
       }
     });
   }
+
+  async verifyEmail(email: string) {
+    const transporter = nodemailer.createTransport({
+      auth: {
+        user: process.env.MAIL_TRAP_USERNAME,
+        pass: process.env.MAIL_TRAP_PASSWORD,
+      },
+      host: 'sandbox.smtp.mailtrap.io',
+      port: 2525,
+    });
+
+    const mailOptions = {
+      from: 'abumahfuz21@gmail.com',
+      to: email,
+      subject: 'Email Verification',
+      html: 'Congratulations, Your Email Have been verified successfully',
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+  }
 }

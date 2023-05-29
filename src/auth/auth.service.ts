@@ -1,12 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { SignupDTO } from './dto/auth.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './schema/auth.schema';
 import * as bcrypt from 'bcrypt';
 import { CreateUserResponse, LoginResponse } from './entities/auth.entity';
 import * as jwt from 'jsonwebtoken';
-import { generateOtp } from '../helpers/generateOtp';
+import { generateOTP } from '../helpers/generateOtp';
 import { VerificationToken } from './schema/verification.schema';
 import { EmailService } from './mail/email.service';
 
@@ -30,7 +29,7 @@ export class AuthService {
     const newUser = new this.userModel({ email, password, name });
     newUser.password = await bcrypt.hash(password, 10);
 
-    const OTP = generateOtp();
+    const OTP = generateOTP(4);
 
     const newVerificationToken = new this.verificationTokenModel({
       user: newUser._id.toString(),
@@ -74,5 +73,34 @@ export class AuthService {
       token,
     };
     return response;
+  }
+
+  async verifyEmail(otp: string, userId: string) {
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new BadRequestException('User with this email does not exist');
+    }
+    const verificationToken = await this.verificationTokenModel.findOne({
+      user: userId,
+      token: otp,
+      purpose: 'email-verification',
+    });
+
+    if (!verificationToken) {
+      throw new BadRequestException('Invalid OTP');
+    }
+    if (verificationToken.used) {
+      throw new BadRequestException('OTP already used');
+    }
+    if (verificationToken.expiration < new Date(Date.now())) {
+      throw new BadRequestException('OTP expired');
+    }
+    verificationToken.used = true;
+    await verificationToken.save();
+    user.isEmailVerified = true;
+    await user.save();
+
+    await this.emailService.verifyEmail(user.email);
+    return 'Email Verified';
   }
 }
