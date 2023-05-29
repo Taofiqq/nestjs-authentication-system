@@ -20,6 +20,14 @@ export class SignupDTO {
 }
 
 export class LoginDTO {
+  @IsEmail()
+  @IsNotEmpty()
+  @IsString()
   email: string;
+  @IsString()
+  @IsNotEmpty()
+  @Length(6, 20, {
+    message: 'Password must be between 6 and 20 characters',
+  })
   password: string;
 }

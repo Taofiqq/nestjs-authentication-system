@@ -3,3 +3,10 @@ export interface CreateUserResponse {
   email: string;
   name: string;
 }
+
+export interface LoginResponse {
+  id: string;
+  email: string;
+  name: string;
+  token: string;
+}
