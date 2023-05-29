@@ -7,6 +7,7 @@ import {
   VerificationToken,
   VerificationTokenSchema,
 } from './schema/verification.schema';
+import { EmailService } from './mail/email.service';
 
 @Module({
   imports: [
@@ -22,6 +23,6 @@ import {
     ]),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, EmailService],
 })
 export class AuthModule {}
