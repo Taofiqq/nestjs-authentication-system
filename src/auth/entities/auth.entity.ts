@@ -1,1 +1,5 @@
-export class Auth {}
+export interface CreateUserResponse {
+  id: string;
+  email: string;
+  name: string;
+}
