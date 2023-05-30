@@ -8,6 +8,7 @@ import {
   VerificationTokenSchema,
 } from './schema/verification.schema';
 import { EmailService } from './mail/email.service';
+import { ResetToken, ResetTokenSchema } from './schema/reset.token.schema';
 
 @Module({
   imports: [
@@ -19,6 +20,10 @@ import { EmailService } from './mail/email.service';
       {
         name: VerificationToken.name,
         schema: VerificationTokenSchema,
+      },
+      {
+        name: ResetToken.name,
+        schema: ResetTokenSchema,
       },
     ]),
   ],

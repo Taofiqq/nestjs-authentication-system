@@ -29,4 +29,22 @@ export class AuthController {
     const user = await this.authService.verifyEmail(otp, userId);
     return user;
   }
+
+  // forgot password
+
+  @Post('/forgot')
+  async forgotPassword(@Body() body: { email: string }) {
+    const { email } = body;
+    const user = await this.authService.forgotPassword(email);
+    return user;
+  }
+
+  // reset password
+
+  @Post('/reset')
+  async resetPassword(@Body() body: { token: string; password: string }) {
+    const { token, password } = body;
+    const user = await this.authService.resetPassword(token, password);
+    return user;
+  }
 }
